@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self'",
               "img-src 'self' data: https: blob:",
-              "connect-src 'self' https://compack.co.in",
+              "connect-src 'self'",
               "frame-ancestors 'none'",
             ].join("; "),
           },

@@ -1,4 +1,4 @@
-import type { Provider } from "@/lib/compack/types";
+import type { Provider } from "@/lib/studio/types";
 
 interface ProviderCardProps {
   id: string;

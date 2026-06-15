@@ -1,5 +1,5 @@
-import { CompackStudio } from "@/components/compack/CompackStudio";
+import { PackagingStudio } from "@/components/studio/PackagingStudio";
 
 export default function Home() {
-  return <CompackStudio />;
+  return <PackagingStudio />;
 }

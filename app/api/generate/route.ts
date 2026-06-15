@@ -1,6 +1,6 @@
-import { generatePollinationsImage } from "@/lib/compack/pollinations";
-import type { Provider } from "@/lib/compack/types";
-import { generateWaveSpeed } from "@/lib/compack/wavespeed";
+import { generatePollinationsImage } from "@/lib/studio/pollinations";
+import type { Provider } from "@/lib/studio/types";
+import { generateWaveSpeed } from "@/lib/studio/wavespeed";
 
 const PROVIDERS: Provider[] = ["pollinations", "wavespeed"];
 

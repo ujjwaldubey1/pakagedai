@@ -6,7 +6,7 @@ export async function downloadImage(imageUrl: string): Promise<void> {
     const blob = await res.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `compack-packaging-${Date.now()}.png`;
+    a.download = `packaging-design-${Date.now()}.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

@@ -1,5 +1,5 @@
 {
-  "name": "compack",
+  "name": "ai-packaging-generator",
   "version": "0.1.0",
   "private": true,
   "scripts": {

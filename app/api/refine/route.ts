@@ -1,4 +1,4 @@
-import { refinePrompt } from "@/lib/compack/prompt";
+import { refinePrompt } from "@/lib/studio/prompt";
 
 function refineErrorStatus(message: string): number {
   if (message.includes("not configured") || message.includes("invalid")) return 503;

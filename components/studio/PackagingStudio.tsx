@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { generateImageApi, loadImageUrl, refinePromptApi } from "@/lib/compack/client";
-import { downloadImage } from "@/lib/compack/download";
-import { toDescription } from "@/lib/compack/prompt";
-import type { DesignFormData, Provider } from "@/lib/compack/types";
+import { generateImageApi, loadImageUrl, refinePromptApi } from "@/lib/studio/client";
+import { downloadImage } from "@/lib/studio/download";
+import { toDescription } from "@/lib/studio/prompt";
+import type { DesignFormData, Provider } from "@/lib/studio/types";
 import { DesignPanel } from "./DesignPanel";
 import { Header } from "./Header";
 import { PoweredFooter } from "./PoweredFooter";
@@ -12,7 +12,7 @@ import { ResultSection } from "./ResultSection";
 import { SetupPanel } from "./SetupPanel";
 import { StepTabs } from "./StepTabs";
 
-export function CompackStudio() {
+export function PackagingStudio() {
   const [provider, setProvider] = useState<Provider>("pollinations");
   const [designUnlocked, setDesignUnlocked] = useState(false);
   const [showSetup, setShowSetup] = useState(true);

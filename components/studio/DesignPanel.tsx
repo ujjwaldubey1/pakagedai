@@ -4,7 +4,7 @@ import {
   COLOR_OPTIONS,
   MATERIAL_OPTIONS,
   VIBE_OPTIONS,
-} from "@/lib/compack/types";
+} from "@/lib/studio/types";
 import { TagGroup } from "./TagGroup";
 
 interface DesignPanelProps {

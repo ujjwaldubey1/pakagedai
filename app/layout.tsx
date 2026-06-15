@@ -16,9 +16,9 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Compack – AI Packaging Generator",
+  title: "AI Packaging Generator",
   description:
-    "Compack AI Studio - Generate stunning AI-powered packaging concepts instantly. Describe your product and watch AI craft your perfect packaging design.",
+    "Generate stunning AI-powered packaging concepts instantly. Describe your product and watch AI craft your perfect packaging design.",
   keywords: [
     "packaging design",
     "AI packaging",
@@ -26,22 +26,15 @@ export const metadata: Metadata = {
     "product packaging",
     "design tools",
   ],
-  authors: [{ name: "Compack Packaging" }],
-  metadataBase: new URL("https://compack.co.in"),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
-    title: "Compack – AI Packaging Generator",
+    title: "AI Packaging Generator",
     description:
       "Visualize your perfect packaging. Describe your idea — our AI crafts a stunning packaging concept instantly.",
     type: "website",
-    url: "https://compack.co.in",
-    images: [{ url: "https://compack.co.in/og-image.png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Compack – AI Packaging Generator",
+    title: "AI Packaging Generator",
     description: "Visualize your perfect packaging with AI.",
   },
   other: {

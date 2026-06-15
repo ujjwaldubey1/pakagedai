@@ -27,15 +27,6 @@ export function PoweredFooter() {
         title="Visit WaveSpeed website"
       >
         WaveSpeed
-      </a>{" "}
-      &nbsp;·&nbsp; Built for{" "}
-      <a
-        href="https://compack.co.in"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Visit Compack Packaging website"
-      >
-        Compack Packaging
       </a>
     </div>
   );
