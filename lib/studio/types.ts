@@ -1,5 +1,3 @@
-export type Provider = "pollinations" | "wavespeed";
-
 export interface DesignFormData {
   product: string;
   boxType: string | null;

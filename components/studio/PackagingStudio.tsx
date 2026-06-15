@@ -4,20 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { generateImageApi, loadImageUrl, refinePromptApi } from "@/lib/studio/client";
 import { downloadImage } from "@/lib/studio/download";
 import { toDescription } from "@/lib/studio/prompt";
-import type { DesignFormData, Provider } from "@/lib/studio/types";
+import type { DesignFormData } from "@/lib/studio/types";
 import { DesignPanel } from "./DesignPanel";
 import { Header } from "./Header";
 import { PoweredFooter } from "./PoweredFooter";
 import { ResultSection } from "./ResultSection";
-import { SetupPanel } from "./SetupPanel";
-import { StepTabs } from "./StepTabs";
+
+const FALLBACK_NOTICE =
+  "This image was generated with our backup model because primary credits were exhausted.";
 
 export function PackagingStudio() {
-  const [provider, setProvider] = useState<Provider>("pollinations");
-  const [designUnlocked, setDesignUnlocked] = useState(false);
-  const [showSetup, setShowSetup] = useState(true);
-  const [showDesign, setShowDesign] = useState(false);
-
   const [product, setProduct] = useState("");
   const [extra, setExtra] = useState("");
   const [boxType, setBoxType] = useState<string | null>(null);
@@ -25,9 +21,9 @@ export function PackagingStudio() {
   const [color, setColor] = useState<string | null>(null);
   const [vibe, setVibe] = useState<string | null>(null);
 
-  const [setupError, setSetupError] = useState<string | null>(null);
   const [designError, setDesignError] = useState<string | null>(null);
   const [resultError, setResultError] = useState<string | null>(null);
+  const [fallbackNotice, setFallbackNotice] = useState<string | null>(null);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -43,31 +39,6 @@ export function PackagingStudio() {
   const downloadBtnRef = useRef<HTMLButtonElement>(null);
   const resultSectionRef = useRef<HTMLDivElement>(null);
 
-  const pickProvider = useCallback((p: Provider) => {
-    setProvider(p);
-  }, []);
-
-  const confirmSetup = useCallback(() => {
-    setSetupError(null);
-    setDesignUnlocked(true);
-    setShowSetup(false);
-    setShowDesign(true);
-    setTimeout(() => productRef.current?.focus(), 0);
-  }, []);
-
-  const backToSetup = useCallback(() => {
-    setShowSetup(true);
-    setShowDesign(false);
-    setShowResult(false);
-    setDesignUnlocked(false);
-    setImageUrl(null);
-    setShowRegenBtn(false);
-    setShowDlBtn(false);
-    setShowRefinedBox(false);
-    setResultError(null);
-    setDesignError(null);
-  }, []);
-
   const backToDesign = useCallback(() => {
     setShowResult(false);
     setImageUrl(null);
@@ -75,6 +46,7 @@ export function PackagingStudio() {
     setShowDlBtn(false);
     setShowRefinedBox(false);
     setResultError(null);
+    setFallbackNotice(null);
     setTimeout(() => productRef.current?.focus(), 0);
   }, []);
 
@@ -99,6 +71,7 @@ export function PackagingStudio() {
       const data = getFormData();
       setDesignError(null);
       setResultError(null);
+      setFallbackNotice(null);
 
       if (!data.product) {
         setDesignError("⚠️ Please describe what's inside the package.");
@@ -126,14 +99,13 @@ export function PackagingStudio() {
         setShowRefinedBox(true);
 
         setLoadingStep(2);
-        setLoadingText(
-          provider === "wavespeed"
-            ? "Generating image via WaveSpeed…"
-            : "Generating image via Pollinations…",
-        );
+        setLoadingText("Generating your packaging image…");
 
-        const url = await generateImageApi(provider, refined);
-        if (provider === "wavespeed") {
+        const { url, usedFallback } = await generateImageApi(refined);
+        if (usedFallback) {
+          setFallbackNotice(FALLBACK_NOTICE);
+        }
+        if (!url.startsWith("data:")) {
           await loadImageUrl(url);
         }
 
@@ -148,7 +120,7 @@ export function PackagingStudio() {
         setIsGenerating(false);
       }
     },
-    [getFormData, isGenerating, provider],
+    [getFormData, isGenerating],
   );
 
   const regen = useCallback(() => {
@@ -157,6 +129,7 @@ export function PackagingStudio() {
     setShowDlBtn(false);
     setShowRefinedBox(false);
     setResultError(null);
+    setFallbackNotice(null);
     void generate();
   }, [generate]);
 
@@ -165,56 +138,27 @@ export function PackagingStudio() {
   }, [imageUrl]);
 
   useEffect(() => {
+    productRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && e.ctrlKey && showDesign && !showSetup) {
+      if (e.key === "Enter" && e.ctrlKey) {
         e.preventDefault();
         void generate();
-      }
-
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-        const pollinate = document.getElementById("card-pollinations");
-        const wavespeed = document.getElementById("card-wavespeed");
-        if (
-          document.activeElement === pollinate ||
-          document.activeElement === wavespeed
-        ) {
-          e.preventDefault();
-          const next = e.key === "ArrowRight" ? wavespeed : pollinate;
-          next?.focus();
-          pickProvider(next === wavespeed ? "wavespeed" : "pollinations");
-        }
       }
     };
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [generate, pickProvider, showDesign, showSetup]);
+  }, [generate]);
 
   return (
     <div className="widget">
       <Header />
 
       <div className="card" role="main">
-        <StepTabs
-          designUnlocked={designUnlocked}
-          onDesignTab={() => {
-            if (designUnlocked) {
-              setShowSetup(false);
-              setShowDesign(true);
-            }
-          }}
-        />
-
-        <SetupPanel
-          hidden={!showSetup}
-          provider={provider}
-          setupError={setupError}
-          onProviderChange={pickProvider}
-          onConfirm={confirmSetup}
-        />
-
         <DesignPanel
-          hidden={!showDesign}
           product={product}
           extra={extra}
           boxType={boxType}
@@ -230,7 +174,6 @@ export function PackagingStudio() {
           onMaterialChange={setMaterial}
           onColorChange={setColor}
           onVibeChange={setVibe}
-          onBackToSetup={backToSetup}
           onSubmit={(e) => void generate(e)}
         />
 
@@ -238,6 +181,7 @@ export function PackagingStudio() {
           <ResultSection
             visible={showResult}
             resultError={resultError}
+            fallbackNotice={fallbackNotice}
             isGenerating={isGenerating}
             loadingText={loadingText}
             loadingStep={loadingStep}

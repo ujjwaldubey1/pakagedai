@@ -4,6 +4,7 @@ import { LoadingOverlay } from "./LoadingOverlay";
 interface ResultSectionProps {
   visible: boolean;
   resultError: string | null;
+  fallbackNotice: string | null;
   isGenerating: boolean;
   loadingText: string;
   loadingStep: 1 | 2 | 3;
@@ -21,6 +22,7 @@ interface ResultSectionProps {
 export function ResultSection({
   visible,
   resultError,
+  fallbackNotice,
   isGenerating,
   loadingText,
   loadingStep,
@@ -47,6 +49,12 @@ export function ResultSection({
       {resultError && (
         <div className="error-msg visible" id="error-result" role="alert" aria-live="assertive">
           {resultError}
+        </div>
+      )}
+
+      {fallbackNotice && !resultError && (
+        <div className="info-notice visible" role="status" aria-live="polite">
+          {fallbackNotice}
         </div>
       )}
 

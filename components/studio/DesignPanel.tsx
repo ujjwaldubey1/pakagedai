@@ -8,7 +8,6 @@ import {
 import { TagGroup } from "./TagGroup";
 
 interface DesignPanelProps {
-  hidden: boolean;
   product: string;
   extra: string;
   boxType: string | null;
@@ -24,12 +23,10 @@ interface DesignPanelProps {
   onMaterialChange: (value: string) => void;
   onColorChange: (value: string) => void;
   onVibeChange: (value: string) => void;
-  onBackToSetup: () => void;
   onSubmit: (e: React.FormEvent) => void;
 }
 
 export function DesignPanel({
-  hidden,
   product,
   extra,
   boxType,
@@ -45,11 +42,10 @@ export function DesignPanel({
   onMaterialChange,
   onColorChange,
   onVibeChange,
-  onBackToSetup,
   onSubmit,
 }: DesignPanelProps) {
   return (
-    <div className={`panel ${hidden ? "hidden" : ""}`} id="design-panel">
+    <div className="panel" id="design-panel">
       <form id="design-form" onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="product">What&apos;s inside the package?</label>
@@ -125,43 +121,33 @@ export function DesignPanel({
           </div>
         )}
 
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <button
-            type="button"
-            className="btn btn-outline btn-sm"
-            onClick={onBackToSetup}
-            aria-label="Go back to choose a different provider"
-          >
-            ← Change Provider
-          </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            id="gen-btn"
-            disabled={isGenerating}
-            aria-label="Generate a packaging image based on your design description"
-            aria-busy={isGenerating}
-          >
-            {!isGenerating && (
-              <svg
-                id="btn-icon"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                aria-hidden="true"
-              >
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            )}
-            {isGenerating && <div className="spinner visible" id="gen-spinner" aria-hidden="true" />}
-            <span id="btn-label">
-              {isGenerating ? "Generating…" : "Generate Packaging Image"}
-            </span>
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          id="gen-btn"
+          disabled={isGenerating}
+          aria-label="Generate a packaging image based on your design description"
+          aria-busy={isGenerating}
+        >
+          {!isGenerating && (
+            <svg
+              id="btn-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
+            >
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          )}
+          {isGenerating && <div className="spinner visible" id="gen-spinner" aria-hidden="true" />}
+          <span id="btn-label">
+            {isGenerating ? "Generating…" : "Generate Packaging Image"}
+          </span>
+        </button>
       </form>
     </div>
   );

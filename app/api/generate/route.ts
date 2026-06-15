@@ -1,22 +1,13 @@
-import { generatePollinationsImage } from "@/lib/studio/pollinations";
-import type { Provider } from "@/lib/studio/types";
+import {
+  generatePollinationsImage,
+  isPollinationsExhausted,
+} from "@/lib/studio/pollinations";
 import { generateWaveSpeed } from "@/lib/studio/wavespeed";
-
-const PROVIDERS: Provider[] = ["pollinations", "wavespeed"];
-
-function isProvider(value: string): value is Provider {
-  return PROVIDERS.includes(value as Provider);
-}
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { provider?: string; prompt?: string };
-    const provider = body.provider;
+    const body = (await request.json()) as { prompt?: string };
     const prompt = body.prompt?.trim();
-
-    if (!provider || !isProvider(provider)) {
-      return Response.json({ error: "Valid provider is required" }, { status: 400 });
-    }
 
     if (!prompt) {
       return Response.json({ error: "Prompt is required" }, { status: 400 });
@@ -26,14 +17,16 @@ export async function POST(request: Request) {
       return Response.json({ error: "Prompt is too long" }, { status: 400 });
     }
 
-    let url: string;
-    if (provider === "pollinations") {
-      url = await generatePollinationsImage(prompt);
-    } else {
-      url = await generateWaveSpeed(prompt);
-    }
+    try {
+      const url = await generatePollinationsImage(prompt);
+      return Response.json({ url, usedFallback: false });
+    } catch (err) {
+      if (!isPollinationsExhausted(err)) throw err;
 
-    return Response.json({ url });
+      console.warn("[POST /api/generate] Pollinations exhausted, falling back to WaveSpeed");
+      const url = await generateWaveSpeed(prompt);
+      return Response.json({ url, usedFallback: true });
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : "Generation failed";
     console.error("[POST /api/generate]", message);

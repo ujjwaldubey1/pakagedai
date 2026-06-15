@@ -1,5 +1,3 @@
-import type { Provider } from "./types";
-
 async function parseError(res: Response): Promise<string> {
   const data = (await res.json().catch(() => ({}))) as { error?: string };
   return data.error || `Request failed (${res.status})`;
@@ -20,19 +18,23 @@ export async function refinePromptApi(description: string): Promise<string> {
   return data.prompt;
 }
 
-export async function generateImageApi(provider: Provider, prompt: string): Promise<string> {
+export interface GenerateImageResult {
+  url: string;
+  usedFallback: boolean;
+}
+
+export async function generateImageApi(prompt: string): Promise<GenerateImageResult> {
   const res = await fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ provider, prompt }),
+    body: JSON.stringify({ prompt }),
   });
 
   if (!res.ok) {
     throw new Error(await parseError(res));
   }
 
-  const data = (await res.json()) as { url: string };
-  return data.url;
+  return (await res.json()) as GenerateImageResult;
 }
 
 export function loadImageUrl(url: string): Promise<void> {
